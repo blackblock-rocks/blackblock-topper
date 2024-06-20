@@ -44,7 +44,8 @@ dependencies {
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
 	modImplementation include("rocks.blackblock:screenbuilder:${project.screenbuilder}")
-	modImplementation ("rocks.blackblock:blackblock:${project.blackblock_core_version}")
+	modImplementation ("rocks.blackblock:blackblock-core:${project.blackblock_core_version}")
+	modImplementation ("rocks.blackblock:blackblock-bib:${project.blackblock_bib_version}")
 }
 
 processResources {

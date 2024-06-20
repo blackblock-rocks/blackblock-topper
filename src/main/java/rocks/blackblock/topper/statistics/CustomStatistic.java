@@ -1,11 +1,16 @@
 package rocks.blackblock.topper.statistics;
 
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.PropertyMap;
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.ProfileComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
 import net.minecraft.item.PlayerHeadItem;
 import net.minecraft.nbt.*;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
+import net.minecraft.util.Util;
 import org.jetbrains.annotations.NotNull;
 import rocks.blackblock.core.statistics.StatFormat;
 import rocks.blackblock.topper.BlackBlockTopper;
@@ -43,7 +48,7 @@ public class CustomStatistic {
         // If the display item is not set, then return the owner's player head.
         if (this.display_item == null || this.display_item.isEmpty()) {
             ItemStack default_head = new ItemStack(Items.PLAYER_HEAD);
-            default_head.setSubNbt(PlayerHeadItem.SKULL_OWNER_KEY, NbtString.of(this.getOwner()));
+            default_head.set(DataComponentTypes.PROFILE, new ProfileComponent(Optional.of(this.getOwner()), Optional.empty(), new PropertyMap()));
             return default_head;
         }
         // Return.

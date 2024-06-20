@@ -1,26 +1,13 @@
 package rocks.blackblock.topper.statistics;
 
-import com.mojang.brigadier.arguments.StringArgumentType;
-import com.mojang.brigadier.context.CommandContext;
-import com.mojang.brigadier.exceptions.CommandSyntaxException;
-import net.minecraft.command.argument.ScoreHolderArgumentType;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
-import net.minecraft.server.PlayerManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.stat.StatFormatter;
-import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
-import rocks.blackblock.core.BlackBlockCore;
 import rocks.blackblock.core.component.Component;
-import rocks.blackblock.core.helper.PlayerHelper;
-import rocks.blackblock.core.utils.BBLog;
 import rocks.blackblock.topper.BlackBlockTopper;
-import rocks.blackblock.topper.server.Commands;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -33,9 +20,9 @@ public class CustomStatisticsComponent implements Component.Global {
 
     public CustomStatisticsComponent() {
         if (INSTANCE != null) {
-            BBLog.log("CustomStatisticsComponent already exists!");
+            BlackBlockTopper.LOGGER.warn("CustomStatisticsComponent already exists!");
         } else {
-            BBLog.attention("Creating CustomStatisticsComponent!");
+            BlackBlockTopper.LOGGER.info("Creating CustomStatisticsComponent!");
             INSTANCE = this;
         }
     }

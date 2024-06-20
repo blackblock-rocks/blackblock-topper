@@ -1,5 +1,7 @@
 package rocks.blackblock.topper.statistics;
 
+import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.NbtComponent;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -106,7 +108,7 @@ public class StatisticsScreen extends ItemBrowsingScreen {
                 ItemStack stack = new ItemStack(item);
 
                 // Give the stack the appropriate name (translatable) and value, then put into list.
-                stack.setCustomName(Text.translatable("stat." + id.toTranslationKey()).append(Text.literal(": ").append(Text.literal(formatter.format(stat)).formatted(Formatting.WHITE))).setStyle(Style.EMPTY.withColor(Formatting.YELLOW).withItalic(false)));
+                stack.set(DataComponentTypes.CUSTOM_NAME, Text.translatable("stat." + id.toTranslationKey()).append(Text.literal(": ").append(Text.literal(formatter.format(stat)).formatted(Formatting.WHITE))).setStyle(Style.EMPTY.withColor(Formatting.YELLOW).withItalic(false)));
                 mod_stacks.add(stack);
             }
         });
@@ -123,8 +125,13 @@ public class StatisticsScreen extends ItemBrowsingScreen {
                 ItemStack stack = customStatistic.getDisplayItem().copy();
 
                 // Give the stack the appropriate name and value, put the owner in the lore and NBT, then put into list.
-                stack.setCustomName(Text.literal(customStatistic.getDisplayName()).append(Text.literal(": ").append(Text.literal(String.valueOf(customStatistic.getFormattedScore(player.getName().getString()))).formatted(Formatting.WHITE))).setStyle(Style.EMPTY.withColor(Formatting.YELLOW).withItalic(false)));
-                stack.setSubNbt("custom_stat_owner", NbtString.of(customStatistic.getOwner()));
+                stack.set(DataComponentTypes.CUSTOM_NAME, Text.literal(customStatistic.getDisplayName()).append(Text.literal(": ").append(Text.literal(String.valueOf(customStatistic.getFormattedScore(player.getName().getString()))).formatted(Formatting.WHITE))).setStyle(Style.EMPTY.withColor(Formatting.YELLOW).withItalic(false)));
+                NbtComponent nbt = stack.get(DataComponentTypes.CUSTOM_DATA);
+                if (nbt != null) {
+                    NbtCompound nbt2 = nbt.getNbt();
+                    nbt2.putString("custom_stat_owner", customStatistic.getOwner());
+                    stack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(nbt2));
+                }
                 custom_stacks.add(stack);
             }
         });
@@ -308,13 +315,7 @@ public class StatisticsScreen extends ItemBrowsingScreen {
         for (int i = 0; i < items.size(); i++) {
             // Create stack with statistics on it.
             ItemStack stack = new ItemStack(items.get(i));
-            NbtList stats_lore = new NbtList();
-
-            // Put the stat lore back into the item stack, then make item name yellow.
-            NbtCompound display_nbt = new NbtCompound();
-            display_nbt.put("Lore", stats_lore);
-            stack.setSubNbt("display", display_nbt);
-            stack.setCustomName(Text.translatable(stack.getTranslationKey()).setStyle(Style.EMPTY.withColor(Formatting.YELLOW).withItalic(false)));
+            stack.set(DataComponentTypes.CUSTOM_NAME, Text.translatable(stack.getTranslationKey()).setStyle(Style.EMPTY.withColor(Formatting.YELLOW).withItalic(false)));
 
             // Create button stack.
             ButtonWidgetSlot button = sb.addButton(i + 1 + i / 8);
@@ -376,8 +377,12 @@ public class StatisticsScreen extends ItemBrowsingScreen {
             button.setStack(stack);
 
             // If stack has a custom_stat_owner attribute, add that to the lore.
-            if (!stack.getNbt().getString("custom_stat_owner").isEmpty())
-                button.setLore(Text.literal("ᴄᴜꜱᴛᴏᴍ ꜱᴛᴀᴛɪꜱᴛɪᴄ [" + stack.getNbt().getString("custom_stat_owner") + "]"));
+            NbtComponent nbt = stack.get(DataComponentTypes.CUSTOM_DATA);
+            if (nbt != null) {
+                String custom_stat_owner = nbt.getNbt().getString("custom_stat_owner");
+                if (!custom_stat_owner.isEmpty())
+                    button.setLore(Text.literal("ᴄᴜꜱᴛᴏᴍ ꜱᴛᴀᴛɪꜱᴛɪᴄ [" + custom_stat_owner + "]"));
+            }
 
             // Set up listener to send message in chat.
             SlotEventListener listener = (screen, slot) -> player.sendMessage(stack.getName());

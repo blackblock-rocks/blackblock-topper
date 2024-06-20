@@ -1,5 +1,6 @@
 package rocks.blackblock.topper.screen;
 
+import net.minecraft.component.DataComponentTypes;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -72,7 +73,10 @@ public enum SortCriteria implements StringIdentifiable {
         // Owner sort. First, sort alphabetical, THEN by owner.
         } else if (this == SortCriteria.OWNER) {
             stacks.sort(Comparator.comparing(stack -> stack.getName().getString()));
-            stacks.sort(Comparator.comparing(stack -> stack.getNbt().getString("custom_stat_owner").isEmpty() ? "zzzzzzzzzzzzzzzz" : stack.getNbt().getString("custom_stat_owner")));
+            stacks.sort(Comparator.comparing(stack -> {
+                String owner = stack.getComponents().get(DataComponentTypes.CUSTOM_DATA).getNbt().getString("custom_stat_owner");
+                return owner.isEmpty() ? "zzzzzzzzzzzzzzzz" : owner;
+            }));
 
         // Mined stat, being the only block stat, gets its own special part.
         } else if (this == SortCriteria.MINED) {

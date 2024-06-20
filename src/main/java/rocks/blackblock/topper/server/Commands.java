@@ -14,8 +14,9 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
-import rocks.blackblock.core.commands.CommandCreator;
-import rocks.blackblock.core.commands.CommandLeaf;
+import rocks.blackblock.bib.command.CommandCreator;
+import rocks.blackblock.bib.command.CommandLeaf;
+import rocks.blackblock.core.helper.PlayerHelper;
 import rocks.blackblock.core.statistics.StatFormat;
 import rocks.blackblock.topper.creative.CreativeScreen;
 import rocks.blackblock.topper.statistics.CustomStatistic;
@@ -686,7 +687,7 @@ public class Commands {
         String scoreholder_name = ScoreHolderArgumentType.getScoreHolder(context, name).getNameForScoreboard();
 
         // Input cleansing.
-        if (scoreholder_name == null || scoreholder_name.isEmpty() || !PlayerEntity.isUsernameValid(scoreholder_name)) {
+        if (scoreholder_name == null || scoreholder_name.isEmpty() || !PlayerHelper.isValidUsername(scoreholder_name)) {
             context.getSource().sendFeedback(() -> Text.literal("Not a valid player!").formatted(Formatting.RED), false);
             return null;
         }
@@ -712,7 +713,7 @@ public class Commands {
         List<String> names = new ArrayList<>();
         for (ScoreHolder scoreHolder : scoreHolders) {
             String scoreholder_name = scoreHolder.getNameForScoreboard();
-            if (scoreholder_name == null || scoreholder_name.isEmpty() || !PlayerEntity.isUsernameValid(scoreholder_name)) {
+            if (scoreholder_name == null || scoreholder_name.isEmpty() || !PlayerHelper.isValidUsername(scoreholder_name)) {
                 context.getSource().sendFeedback(() -> Text.literal(scoreholder_name + " is not a valid player!").formatted(Formatting.RED), false);
                 return null;
             }
