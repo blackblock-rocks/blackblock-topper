@@ -118,7 +118,7 @@ public class StatisticsScreen extends ItemBrowsingScreen {
 
         // Create item stacks from mod-level statistics.
         List<ItemStack> custom_stacks = new ArrayList<>();
-        CustomStatisticsComponent.getInstance().getCustomStatistics().forEach(customStatistic -> {
+        CustomStatisticsAugment.getInstance().getCustomStatistics().forEach(customStatistic -> {
             // Skip if stat is 0 and we're hiding empty stats.
             if (!(hide_empty_stats && customStatistic.getScore(player.getName().getString()) == 0)) {
                 // Instantiate item stack.

@@ -3,26 +3,28 @@ package rocks.blackblock.topper.statistics;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
+import net.minecraft.registry.RegistryWrapper;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
-import rocks.blackblock.core.component.Component;
+import rocks.blackblock.bib.BibMod;
+import rocks.blackblock.bib.augment.Augment;
 import rocks.blackblock.topper.BlackBlockTopper;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class CustomStatisticsComponent implements Component.Global {
+public class CustomStatisticsAugment implements Augment.Global {
 
-    private static CustomStatisticsComponent INSTANCE = null;
+    private static CustomStatisticsAugment INSTANCE = null;
     private final List<CustomStatistic> customStatisticList = new ArrayList<>();
     private boolean is_dirty = false;
 
-    public CustomStatisticsComponent() {
+    public CustomStatisticsAugment() {
         if (INSTANCE != null) {
-            BlackBlockTopper.LOGGER.warn("CustomStatisticsComponent already exists!");
+            BlackBlockTopper.LOGGER.warn("CustomStatisticsAugment already exists!");
         } else {
-            BlackBlockTopper.LOGGER.info("Creating CustomStatisticsComponent!");
+            BlackBlockTopper.LOGGER.info("Creating CustomStatisticsAugment!");
             INSTANCE = this;
         }
     }
@@ -40,9 +42,9 @@ public class CustomStatisticsComponent implements Component.Global {
      * @since    0.2.0
      */
     @Override
-    public void readFromNbt(NbtCompound tag) {
+    public void readFromNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         // Get custom statistics list.
-        NbtList list = tag.getList("custom_statistics", NbtElement.COMPOUND_TYPE);
+        NbtList list = nbt.getList("custom_statistics", NbtElement.COMPOUND_TYPE);
 
         // For each entry in the list, add a new custom statistic.
         list.forEach(nbtElement -> {
@@ -59,7 +61,7 @@ public class CustomStatisticsComponent implements Component.Global {
      * @since    0.2.0
      */
     @Override
-    public NbtCompound writeToNbt(NbtCompound tag) {
+    public NbtCompound writeToNbt(NbtCompound tag, RegistryWrapper.WrapperLookup registryLookup) {
         // Create an NBT List and add each statistic compound to it.
         NbtList list = new NbtList();
         customStatisticList.forEach(customStatistic -> list.add(customStatistic.toNbt()));
@@ -163,13 +165,24 @@ public class CustomStatisticsComponent implements Component.Global {
     }
 
     /**
-     * Get the CustomStatisticsComponent instance
+     * Get the CustomStatisticsAugment instance
      *
      * @author   Jade Godwin        <icanhasabanana@gmail.com>
      * @since    0.2.0
      */
-    public static CustomStatisticsComponent getInstance() {
+    public static CustomStatisticsAugment getInstance() {
         if (INSTANCE != null) return INSTANCE;
         return BlackBlockTopper.CUSTOM_STATS.get();
+    }
+
+    /**
+     * Get the registry manager from the World instance
+     *
+     * @author   Jelle De Loecker <jelle@elevenways.be>
+     * @since    0.2.1
+     */
+    @Override
+    public RegistryWrapper.WrapperLookup getRegistryManager() {
+        return BibMod.getDynamicRegistry();
     }
 }

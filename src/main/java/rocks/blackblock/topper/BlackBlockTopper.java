@@ -7,13 +7,13 @@ import net.minecraft.util.Identifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import rocks.blackblock.core.BlackBlockCore;
-import rocks.blackblock.core.component.Component;
-import rocks.blackblock.core.component.ComponentKey;
+import rocks.blackblock.bib.augment.Augment;
+import rocks.blackblock.bib.augment.AugmentKey;
 import rocks.blackblock.topper.compat.TopperEntrypoint;
 import rocks.blackblock.topper.creative.CreativeScreen;
 import rocks.blackblock.topper.creative.CreativeTab;
 import rocks.blackblock.topper.server.Commands;
-import rocks.blackblock.topper.statistics.CustomStatisticsComponent;
+import rocks.blackblock.topper.statistics.CustomStatisticsAugment;
 import rocks.blackblock.topper.statistics.StatisticsScreen;
 
 import java.util.Arrays;
@@ -33,7 +33,7 @@ public class BlackBlockTopper implements ModInitializer {
     public static final HashMap<Identifier, Item> STAT_ITEMS = new HashMap<>();
 
     // Custom statistics component
-    public static ComponentKey.Global<CustomStatisticsComponent> CUSTOM_STATS = Component.Global.register(BlackBlockCore.id("custom_stats"), CustomStatisticsComponent.class, CustomStatisticsComponent::new);
+    public static AugmentKey.Global<CustomStatisticsAugment> CUSTOM_STATS = Augment.Global.register(BlackBlockCore.id("custom_stats"), CustomStatisticsAugment.class, CustomStatisticsAugment::new);
 
 
     /**

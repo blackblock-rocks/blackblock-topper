@@ -5,7 +5,6 @@ import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import net.minecraft.command.argument.ScoreHolderArgumentType;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.ItemStack;
 import net.minecraft.scoreboard.ScoreHolder;
 import net.minecraft.server.command.ServerCommandSource;
@@ -21,7 +20,7 @@ import rocks.blackblock.core.statistics.StatFormat;
 import rocks.blackblock.topper.creative.CreativeScreen;
 import rocks.blackblock.topper.statistics.CustomStatistic;
 import rocks.blackblock.topper.statistics.CustomStatisticPertainability;
-import rocks.blackblock.topper.statistics.CustomStatisticsComponent;
+import rocks.blackblock.topper.statistics.CustomStatisticsAugment;
 import rocks.blackblock.topper.statistics.StatisticsScreen;
 
 import java.util.*;
@@ -139,7 +138,7 @@ public class Commands {
                         last_score = statistic.addScore(target, 1);
 
                     // Send feedback to player and return last score in the list.
-                    CustomStatisticsComponent.getInstance().markDirty();
+                    CustomStatisticsAugment.getInstance().markDirty();
                     if (target_names.size() == 1) {
                         context.getSource().sendFeedback(() -> Text.literal("Added 1 to " + target_names.get(0) + "'s [" + statistic.getDisplayName() + "] stat"), true);
                         return last_score;
@@ -163,7 +162,7 @@ public class Commands {
                         last_score = statistic.addScore(target, amount);
 
                     // Send feedback to player and return last score in the list.
-                    CustomStatisticsComponent.getInstance().markDirty();
+                    CustomStatisticsAugment.getInstance().markDirty();
                     if (target_names.size() == 1) {
                         context.getSource().sendFeedback(() -> Text.literal("Added " + amount + " to " + target_names.get(0) + "'s [" + statistic.getDisplayName() + "] stat"), true);
                         return last_score;
@@ -250,7 +249,7 @@ public class Commands {
                         last_score = statistic.removeScore(target, 1);
 
                     // Send feedback to player and return last score in the list.
-                    CustomStatisticsComponent.getInstance().markDirty();
+                    CustomStatisticsAugment.getInstance().markDirty();
                     if (target_names.size() == 1) {
                         context.getSource().sendFeedback(() -> Text.literal("Subtracted 1 from " + target_names.get(0) + "'s [" + statistic.getDisplayName() + "] stat"), true);
                         return last_score;
@@ -274,7 +273,7 @@ public class Commands {
                         last_score = statistic.removeScore(target, amount);
 
                     // Send feedback to player and return last score in the list.
-                    CustomStatisticsComponent.getInstance().markDirty();
+                    CustomStatisticsAugment.getInstance().markDirty();
                     if (target_names.size() == 1) {
                         context.getSource().sendFeedback(() -> Text.literal("Subtracted " + amount + " from " + target_names.get(0) + "'s [" + statistic.getDisplayName() + "] stat"), true);
                         return last_score;
@@ -305,7 +304,7 @@ public class Commands {
                     target_names.forEach(statistic::resetScore);
 
                     // Send feedback to player and return last score in the list.
-                    CustomStatisticsComponent.getInstance().markDirty();
+                    CustomStatisticsAugment.getInstance().markDirty();
                     if (target_names.size() == 1) {
                         context.getSource().sendFeedback(() -> Text.literal("Reset " + target_names.get(0) + "'s [" + statistic.getDisplayName() + "] stat to 0"), true);
                         return 1;
@@ -341,7 +340,7 @@ public class Commands {
                         last_score = statistic.setScore(target, amount);
 
                     // Send feedback to player and return last score in the list.
-                    CustomStatisticsComponent.getInstance().markDirty();
+                    CustomStatisticsAugment.getInstance().markDirty();
                     if (target_names.size() == 1) {
                         context.getSource().sendFeedback(() -> Text.literal("Set " + target_names.get(0) + "'s [" + statistic.getDisplayName() + "] stat to " + amount), true);
                         return last_score;
@@ -394,7 +393,7 @@ public class Commands {
             }
 
             // Create stat.
-            int return_value = CustomStatisticsComponent.getInstance().createCustomStatistic(
+            int return_value = CustomStatisticsAugment.getInstance().createCustomStatistic(
                     key, StringArgumentType.getString(context, "displayname"), owner_name);
 
             // Send feedback and return.
@@ -416,7 +415,7 @@ public class Commands {
         addCustomStatisticSelection(stats_remove, CustomStatisticPertainability.ALL,
                 (context, player, statistic) -> {
                     // Remove the selected stat.
-                    CustomStatisticsComponent.getInstance().deleteCustomStatistic(statistic);
+                    CustomStatisticsAugment.getInstance().deleteCustomStatistic(statistic);
                     context.getSource().sendFeedback(() -> Text.literal("Deleted custom stat [" + statistic.getDisplayName() + "]"), true);
                     return 1;
                 });
@@ -431,7 +430,7 @@ public class Commands {
         CommandLeaf stats_list = stats.getChild("list");
         stats_list.onExecute(context -> {
             // Get statistics list. Output.
-            List<CustomStatistic> statistics = CustomStatisticsComponent.getInstance().getCustomStatistics();
+            List<CustomStatistic> statistics = CustomStatisticsAugment.getInstance().getCustomStatistics();
             if (statistics.isEmpty())
                 context.getSource().sendFeedback(() -> Text.literal("There are no custom stats"), false);
             else {
@@ -485,7 +484,7 @@ public class Commands {
                 int return_value = statistic.setDisplayName(StringArgumentType.getString(context, "name"));
                 if (return_value == 0) context.getSource().sendFeedback(() -> Text.literal("Failed to change the display name of " + statistic.getKey()).formatted(Formatting.RED), false);
                 else context.getSource().sendFeedback(() -> Text.literal("Changed the display name of " + statistic.getKey() + " to [" + statistic.getDisplayName() + "]"), true);
-                CustomStatisticsComponent.getInstance().markDirty();
+                CustomStatisticsAugment.getInstance().markDirty();
                 return return_value;
             }))
         );
@@ -499,7 +498,7 @@ public class Commands {
             getCustomStatAndExecute(context, CustomStatisticPertainability.OWNS, ((context1, player, statistic) -> {
                 statistic.setDisplayItem(null);
                 context.getSource().sendFeedback(() -> Text.literal("Reset the display item for [" + statistic.getDisplayName() + "]"), true);
-                CustomStatisticsComponent.getInstance().markDirty();
+                CustomStatisticsAugment.getInstance().markDirty();
                 return 1;
             }))
         );
@@ -522,7 +521,7 @@ public class Commands {
                     statistic.setDisplayItem(display_item);
                     String display_item_name = display_item.getName().getString();
                     context.getSource().sendFeedback(() -> Text.literal("Set the display item for [" + statistic.getDisplayName() + "] to [" + display_item_name + "]"), true);
-                    CustomStatisticsComponent.getInstance().markDirty();
+                    CustomStatisticsAugment.getInstance().markDirty();
                     return 1;
                 }))
         );
@@ -581,7 +580,7 @@ public class Commands {
         CommandLeaf remove_input = maintainers_remove.getChild("maintainer_to_remove");
         remove_input.setType(ScoreHolderArgumentType.scoreHolder()).suggests((context, builder) -> {
             // Get selected custom stat and return its maintainers.
-            CustomStatistic customStatistic = CustomStatisticsComponent.getInstance().getCustomStatistic(StringArgumentType.getString(context, "key"));
+            CustomStatistic customStatistic = CustomStatisticsAugment.getInstance().getCustomStatistic(StringArgumentType.getString(context, "key"));
             ServerPlayerEntity player = context.getSource().getPlayer();
             if (customStatistic != null && player != null) customStatistic.getMaintainers().forEach(builder::suggest);
             return builder.buildFuture();
@@ -651,7 +650,7 @@ public class Commands {
 
         // Get custom statistic object.
         String custom_statistic_key = StringArgumentType.getString(context, "key");
-        CustomStatistic customStatistic = CustomStatisticsComponent.getInstance().getCustomStatistic(StringArgumentType.getString(context, "key"));
+        CustomStatistic customStatistic = CustomStatisticsAugment.getInstance().getCustomStatistic(StringArgumentType.getString(context, "key"));
         if (customStatistic == null) {
             source.sendFeedback(() -> Text.literal("Unknown custom stat '" + custom_statistic_key + "'").formatted(Formatting.RED), false);
             return 0;
@@ -739,7 +738,7 @@ public class Commands {
         // Set suggestions.
         key.suggests((context, builder) -> {
             List<CustomStatistic> customStatistics =
-                    CustomStatisticsComponent.getInstance().getCustomStatistics(context.getSource(), pertainability);
+                    CustomStatisticsAugment.getInstance().getCustomStatistics(context.getSource(), pertainability);
             ServerPlayerEntity player = context.getSource().getPlayer();
             if (player != null)
                 customStatistics.forEach(customStatistic -> builder.suggest(customStatistic.getKey().getPath()));
