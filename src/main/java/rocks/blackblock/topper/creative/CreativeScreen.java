@@ -3,7 +3,7 @@ package rocks.blackblock.topper.creative;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.util.Identifier;
+import rocks.blackblock.core.BlackBlockCore;
 import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.interfaces.SlotEventListener;
@@ -173,7 +173,7 @@ public class CreativeScreen extends ItemBrowsingScreen {
     public ScreenBuilder getScreenBuilder() {
         // Initialize screen.
         ScreenBuilder sb = this.createBasicScreenBuilder("creative_input");
-        sb.useFontTexture(new Identifier("blackblock", "gui/bb_creative"));
+        sb.useFontTexture(BlackBlockCore.id("gui/bb_creative"));
         sb.setCloneSlots(false);
         this.setDisplayName("Blackblock Creative");
 
@@ -278,7 +278,7 @@ public class CreativeScreen extends ItemBrowsingScreen {
      */
     public static ScreenBuilder registerScreen() {
         ScreenBuilder sb = new ScreenBuilder("creative_input");
-        sb.useFontTexture(new Identifier("blackblock", "gui/bb_creative"));
+        sb.useFontTexture(BlackBlockCore.id("gui/bb_creative"));
         return sb;
     }
 

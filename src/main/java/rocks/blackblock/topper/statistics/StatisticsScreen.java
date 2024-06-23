@@ -6,17 +6,13 @@ import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NbtCompound;
-import net.minecraft.nbt.NbtList;
-import net.minecraft.nbt.NbtString;
 import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.stat.Stat;
 import net.minecraft.stat.StatFormatter;
 import net.minecraft.stat.Stats;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
-import net.minecraft.util.Identifier;
 import rocks.blackblock.core.BlackBlockCore;
 import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
@@ -265,7 +261,7 @@ public class StatisticsScreen extends ItemBrowsingScreen {
     @Override
     public ScreenBuilder getScreenBuilder() {
         ScreenBuilder sb = this.createBasicScreenBuilder("statistics_input");
-        sb.useFontTexture(new Identifier("blackblock", "gui/bb_stats"));
+        sb.useFontTexture(BlackBlockCore.id("gui/bb_stats"));
         sb.setCloneSlots(false);
 
         // Set display name.
@@ -405,7 +401,7 @@ public class StatisticsScreen extends ItemBrowsingScreen {
      */
     public static ScreenBuilder registerScreen() {
         ScreenBuilder sb = new ScreenBuilder("creative_input");
-        sb.useFontTexture(new Identifier("blackblock", "gui/bb_stats"));
+        sb.useFontTexture(BlackBlockCore.id("gui/bb_stats"));
         return sb;
     }
 

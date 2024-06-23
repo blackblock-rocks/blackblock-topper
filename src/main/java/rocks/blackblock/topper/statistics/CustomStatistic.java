@@ -1,16 +1,13 @@
 package rocks.blackblock.topper.statistics;
 
-import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.properties.PropertyMap;
 import net.minecraft.component.DataComponentTypes;
 import net.minecraft.component.type.ProfileComponent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.Items;
-import net.minecraft.item.PlayerHeadItem;
 import net.minecraft.nbt.*;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
-import net.minecraft.util.Util;
 import org.jetbrains.annotations.NotNull;
 import rocks.blackblock.core.statistics.StatFormat;
 import rocks.blackblock.topper.BlackBlockTopper;

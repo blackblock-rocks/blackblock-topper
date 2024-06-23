@@ -1,7 +1,6 @@
 package rocks.blackblock.topper.mixin;
 
 import com.google.common.collect.Sets;
-import net.minecraft.entity.LivingEntity;
 import net.minecraft.stat.ServerStatHandler;
 import net.minecraft.stat.Stat;
 import org.spongepowered.asm.mixin.Final;
@@ -10,7 +9,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-import rocks.blackblock.topper.BlackBlockTopper;
 
 import java.util.Set;
 
