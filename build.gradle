@@ -1,14 +1,55 @@
 plugins {
 	id 'fabric-loom' version '1.6-SNAPSHOT'
 	id 'maven-publish'
+	id 'org.checkerframework' version '0.6.40'
 }
 
-sourceCompatibility = JavaVersion.VERSION_17
-targetCompatibility = JavaVersion.VERSION_17
+apply plugin: 'org.checkerframework'
+
+/**
+ * Version setup
+ */
+def baseVersion = project.mod_version
+def baseGroup = project.maven_group
+def localPropertiesFile = file('local.properties')
+def localProperties = new Properties()
+
+if (localPropertiesFile.exists()) {
+	localPropertiesFile.withInputStream { stream ->
+		localProperties.load(stream)
+	}
+}
+
+def envVars = System.getenv()
+def currentEnvironment = envVars.getOrDefault("ENV", localProperties.getProperty("environment", "dev"))
+def isDevelopment = currentEnvironment == "dev"
+def localRepoDir = null
+ext.versionModifier = null
+
+if (localProperties.hasProperty("localRepoDir")) {
+	localRepoDir = localProperties.getProperty("localRepoDir")
+} else if (project.hasProperty("localRepoDir")) {
+	localRepoDir = project.findProperty("localRepoDir")
+}
+
+if (isDevelopment) {
+	versionModifier = "-SNAPSHOT"
+}
+
+def constructVersion(baseVersion) {
+	def result = baseVersion + versionModifier
+	return result
+}
 
 archivesBaseName = project.archives_base_name
-version = project.mod_version
-group = project.maven_group
+version = constructVersion(baseVersion)
+group = baseGroup
+
+println("Info: currentEnvironment = $currentEnvironment")
+println("Info: isDevelopment = $isDevelopment")
+println("Info: localRepoDir = $localRepoDir")
+println("Info: versionModifier = $versionModifier")
+println("Info: version = " + version)
 
 repositories {
 
@@ -17,20 +58,57 @@ repositories {
 	}
 
 	flatDir {
+		dirs '../libs/'
+	}
+
+	flatDir {
 		dirs '../PolyMc/build/libs/'
 	}
 
-	flatDir {
-		dirs '../screenbuilder/build/libs/'
+	// PolyMC
+	maven {
+		url "https://maven.theepicblock.nl"
+		content {
+			includeGroup("nl.theepicblock")
+		}
 	}
 
-	// Only during development
-	flatDir {
-		dirs '../blackblock-core/build/libs/'
+	// Blackblock
+	maven {
+		url 'https://maven.blackblock.rocks/releases'
 	}
 
-	// Blackblock repository
-	maven { url 'https://maven.blackblock.rocks/releases' }
+	// Modrinth offers a maven repository
+	exclusiveContent {
+		forRepository {
+			maven {
+				name = "Modrinth"
+				url = "https://api.modrinth.com/maven"
+			}
+		}
+		filter {
+			includeGroup "maven.modrinth"
+		}
+	}
+
+	// Curseforge also offers a maven repository,
+	// though dependencies have to use file id's
+	exclusiveContent {
+		forRepository {
+			maven {
+				url "https://cursemaven.com"
+			}
+		}
+		filter {
+			includeGroup "curse.maven"
+		}
+	}
+
+	if (localRepoDir) {
+		maven {
+			url localRepoDir
+		}
+	}
 }
 
 dependencies {
@@ -40,12 +118,10 @@ dependencies {
 	modImplementation "net.fabricmc:fabric-loader:${project.loader_version}"
 
 	// Fabric API. This is technically optional, but you probably want it anyway.
-	modImplementation "com.github.TheEpicBlock:PolyMc:${project.polymc_version}"
 	modImplementation "net.fabricmc.fabric-api:fabric-api:${project.fabric_version}"
 
-	modImplementation include("rocks.blackblock:screenbuilder:${project.screenbuilder}")
-	modImplementation ("rocks.blackblock:blackblock-core:${project.blackblock_core_version}")
-	modImplementation ("rocks.blackblock:blackblock-bib:${project.blackblock_bib_version}")
+	// Blackblock's core mod, which imports a bunch of other dependencies
+	modImplementation ("rocks.blackblock:blackblock-core:${constructVersion(project.blackblock_core_version)}")
 }
 
 processResources {
@@ -57,8 +133,7 @@ processResources {
 }
 
 tasks.withType(JavaCompile).configureEach {
-	// Minecraft 1.18 (1.18-pre2) upwards uses Java 17.
-	it.options.release = 17
+	it.options.release = 21
 }
 
 java {
@@ -77,8 +152,16 @@ jar {
 // configure the maven publication
 publishing {
 	publications {
-		mavenJava(MavenPublication) {
-			from components.java
+		create("mavenJava", MavenPublication) {
+			artifactId = archives_base_name
+
+			// add all the jars that should be included when publishing to maven
+			artifact(remapJar) {
+				builtBy remapJar
+			}
+			artifact(sourcesJar) {
+				builtBy remapSourcesJar
+			}
 		}
 	}
 
@@ -88,5 +171,25 @@ publishing {
 		// Notice: This block does NOT have the same function as the block in the top level.
 		// The repositories here will be used for publishing your artifact, not for
 		// retrieving dependencies.
+		repositories {
+			if (envVars.MAVEN_URL) {
+				maven {
+					credentials {
+						username envVars.MAVEN_USERNAME
+						password envVars.MAVEN_PASSWORD
+					}
+					url env.MAVEN_URL
+				}
+			} else {
+				mavenLocal()
+			}
+
+			if (isDevelopment && localRepoDir) {
+				maven {
+					name = 'local'
+					url = uri(localRepoDir)
+				}
+			}
+		}
 	}
 }
