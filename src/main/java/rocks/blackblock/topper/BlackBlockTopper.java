@@ -6,6 +6,8 @@ import net.minecraft.item.Item;
 import net.minecraft.util.Identifier;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import rocks.blackblock.bib.BibMod;
+import rocks.blackblock.bib.util.BibServer;
 import rocks.blackblock.core.BlackBlockCore;
 import rocks.blackblock.bib.augment.Augment;
 import rocks.blackblock.bib.augment.AugmentKey;
@@ -60,22 +62,21 @@ public class BlackBlockTopper implements ModInitializer {
 
     @Override
     public void onInitialize() {
+
         // Initialize screens
         CreativeScreen.initialize();
-
-        // Get each topper entrypoint and have them register their info
-        List<TopperEntrypoint> entrypoints = FabricLoader.getInstance().getEntrypoints("blackblock-topper", TopperEntrypoint.class);
-        for (TopperEntrypoint entrypointEntry : entrypoints) {
-            entrypointEntry.registerTopperInfo(this);
-        }
-
-        // Register screens
-        if (FabricLoader.getInstance().isModLoaded("polymc")) {
-            CreativeScreen.registerScreen();
-            StatisticsScreen.registerScreen();
-        }
+        StatisticsScreen.registerScreen();
 
         // Register commands
         Commands.register();
+
+        // Wait for the server (and registries) to be ready
+        BibServer.withReadyServer(minecraftServer -> {
+            // Get each topper entrypoint and have them register their info
+            List<TopperEntrypoint> entrypoints = FabricLoader.getInstance().getEntrypoints("blackblock-topper", TopperEntrypoint.class);
+            for (TopperEntrypoint entrypointEntry : entrypoints) {
+                entrypointEntry.registerTopperInfo(this);
+            }
+        });
     }
 }
