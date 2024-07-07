@@ -5,6 +5,7 @@ import rocks.blackblock.screenbuilder.ScreenBuilder;
 import rocks.blackblock.screenbuilder.inputs.EmptyInput;
 import rocks.blackblock.screenbuilder.interfaces.WidgetDataProvider;
 import rocks.blackblock.screenbuilder.widgets.PaginationWidget;
+import rocks.blackblock.screenbuilder.widgets.Widget;
 
 public abstract class ItemBrowsingScreen extends EmptyInput implements WidgetDataProvider {
 
@@ -34,14 +35,22 @@ public abstract class ItemBrowsingScreen extends EmptyInput implements WidgetDat
     }
 
     @Override
-    public Object getWidgetValue(String widget_id) {
-        if (widget_id.equals("pagination")) { return this.page; }
+    public <T> T getWidgetValue(Widget<T> widget) {
+        String widget_id = widget.getId();
+
+        if (widget_id.equals("pagination")) {
+            return (T) (Integer) this.page;
+        }
+
         return null;
     }
 
     @Override
-    public void setWidgetValue(String widget_id, Object value) {
-        if (widget_id.equals("pagination")) { this.page = (int) value; }
+    public <T> void setWidgetValue(Widget<T> widget, T value) {
+
+        if (widget instanceof PaginationWidget paginationWidget && value != null && widget.getId().equals("pagination")) {
+            this.page = (int) value;
+        }
     }
 
 }
