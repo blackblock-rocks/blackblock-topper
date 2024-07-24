@@ -27,7 +27,7 @@ import java.util.*;
 
 public class Commands {
 
-    private static final CommandLeaf BLACKBLOCK = CommandCreator.getPermissionRoot("blackblock", "blackblock.mod");
+    private static final CommandLeaf BLACKBLOCK = CommandCreator.getBlackblockRoot();
     private static final CommandLeaf BBSTATS = CommandCreator.getRoot("bbstats");
 
     public static void register() {
@@ -230,6 +230,8 @@ public class Commands {
          * @since    0.2.0
          */
         CommandLeaf players_remove = players.getChild("remove");
+        players_remove.requires("commands.bbstats.players.remove");
+
         CommandLeaf remove_key = addCustomStatisticSelection(players_remove, CustomStatisticPertainability.MAINTAINS,null);
         CommandLeaf remove_target = remove_key.getChild("targets");
         remove_target.setType(ScoreHolderArgumentType.scoreHolders()).suggests(ScoreHolderArgumentType.SUGGESTION_PROVIDER);
@@ -291,6 +293,8 @@ public class Commands {
          * @since    0.2.0
          */
         CommandLeaf players_reset = players.getChild("reset");
+        players_reset.requires("commands.bbstats.players.reset");
+
         CommandLeaf reset_key = addCustomStatisticSelection(players_reset, CustomStatisticPertainability.MAINTAINS,null);
         CommandLeaf reset_target = reset_key.getChild("targets");
         reset_target.setType(ScoreHolderArgumentType.scoreHolders()).suggests(ScoreHolderArgumentType.SUGGESTION_PROVIDER);
@@ -322,6 +326,8 @@ public class Commands {
          * @since    0.2.0
          */
         CommandLeaf players_set = players.getChild("set");
+        players_set.requires("commands.bbstats.players.set");
+
         CommandLeaf set_key = addCustomStatisticSelection(players_set, CustomStatisticPertainability.MAINTAINS,null);
         CommandLeaf set_target = set_key.getChild("targets");
         set_target.setType(ScoreHolderArgumentType.scoreHolders()).suggests(ScoreHolderArgumentType.SUGGESTION_PROVIDER);
