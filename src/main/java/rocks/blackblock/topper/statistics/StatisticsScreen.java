@@ -195,7 +195,7 @@ public class StatisticsScreen extends ItemBrowsingScreen {
 
         // Add click behavior.
         SlotEventListener left_click_behavior = (screen, slot) -> {
-            this.hide_empty_stats = !this.hide_empty_stats;
+            this.hide_empty_stats = !this.hide_empty_stats; this.page = 1;
             screen.replaceScreen(this);
         };
         hide_button.addLeftClickListener(left_click_behavior);
