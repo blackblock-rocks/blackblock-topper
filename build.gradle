@@ -73,11 +73,6 @@ repositories {
 		}
 	}
 
-	// Blackblock
-	maven {
-		url 'https://maven.blackblock.rocks/releases'
-	}
-
 	// Modrinth offers a maven repository
 	exclusiveContent {
 		forRepository {
@@ -122,6 +117,8 @@ dependencies {
 
 	// Blackblock's core mod, which imports a bunch of other dependencies
 	modImplementation ("rocks.blackblock:blackblock-core:${constructVersion(project.blackblock_core_version)}")
+	modImplementation ("rocks.blackblock:screenbuilder:${constructVersion(project.screenbuilder_version)}")
+	modImplementation ("rocks.blackblock:blackblock-bib:${constructVersion(project.blackblock_bib_version)}")
 }
 
 processResources {
