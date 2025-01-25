@@ -311,7 +311,7 @@ public class StatisticsScreen extends ItemBrowsingScreen {
         for (int i = 0; i < items.size(); i++) {
             // Create stack with statistics on it.
             ItemStack stack = new ItemStack(items.get(i));
-            stack.set(DataComponentTypes.CUSTOM_NAME, Text.translatable(stack.getTranslationKey()).setStyle(Style.EMPTY.withColor(Formatting.YELLOW).withItalic(false)));
+            stack.set(DataComponentTypes.CUSTOM_NAME, Text.translatable(stack.getItem().getTranslationKey()).setStyle(Style.EMPTY.withColor(Formatting.YELLOW).withItalic(false)));
 
             // Create button stack.
             ButtonWidgetSlot button = sb.addButton(i + 1 + i / 8);
@@ -330,7 +330,7 @@ public class StatisticsScreen extends ItemBrowsingScreen {
             // Set up listener to send message in chat.
             SlotEventListener listener = (screen, slot) -> {
                 // Send this item's stats in chat.
-                player.sendMessage(Text.translatable(stack.getTranslationKey()).formatted(Formatting.YELLOW).append(Text.literal(" has the following statistics:").formatted(Formatting.WHITE)));
+                player.sendMessage(Text.translatable(stack.getItem().getTranslationKey()).formatted(Formatting.YELLOW).append(Text.literal(" has the following statistics:").formatted(Formatting.WHITE)));
                 if (stack.getItem() instanceof BlockItem blockItem) player.sendMessage(Text.literal("- ").formatted(Formatting.YELLOW).append(Text.literal("Times Mined: " + player.getStatHandler().getStat(Stats.MINED.getOrCreateStat(blockItem.getBlock()))).formatted(Formatting.WHITE)));
                 else player.sendMessage(Text.literal("- ").formatted(Formatting.YELLOW).append(Text.literal("Times Mined: 0").formatted(Formatting.WHITE)));
                 player.sendMessage(Text.literal("- ").formatted(Formatting.YELLOW).append(Text.literal("Times Crafted: " + player.getStatHandler().getStat(Stats.CRAFTED.getOrCreateStat(stack.getItem()))).formatted(Formatting.WHITE)));
