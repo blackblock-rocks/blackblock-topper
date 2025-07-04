@@ -41,3 +41,6 @@ replay_*.log
 
 # Local properties
 local.properties
+
+# AI
+.serena/
