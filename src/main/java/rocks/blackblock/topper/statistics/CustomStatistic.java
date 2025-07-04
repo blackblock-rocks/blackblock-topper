@@ -172,42 +172,47 @@ public class CustomStatistic {
     public static CustomStatistic fromNbt(NbtElement nbt) {
         // Only load if all the data is present.
         if (nbt instanceof NbtCompound compound &&
-                compound.contains("owner_name", NbtElement.STRING_TYPE) &&
-                compound.contains("display_name", NbtElement.STRING_TYPE) &&
-                compound.contains("key", NbtElement.STRING_TYPE)) {
+                compound.contains("owner_name") &&
+                compound.contains("display_name") &&
+                compound.contains("key")) {
 
             // Try and convert string key to identifier key.
-            Identifier key = Identifier.tryParse(compound.getString("key"));
+            String keyString = compound.getString("key").orElse("");
+            Identifier key = Identifier.tryParse(keyString);
             if (key == null) {
-                BlackBlockTopper.LOGGER.error("Failed to load a custom statistic " + compound.getString("key") + "!");
+                BlackBlockTopper.LOGGER.error("Failed to load a custom statistic " + keyString + "!");
                 return null;
             }
 
             // Instantiate custom statistic object.
             CustomStatistic customStatistic = new CustomStatistic(
-                    key, compound.getString("display_name"), compound.getString("owner_name"));
+                    key, compound.getString("display_name").orElse(""), compound.getString("owner_name").orElse(""));
 
             // Pull maintainers, if exists.
-            if (compound.contains("maintainers", NbtElement.LIST_TYPE)) {
-                NbtList maintainers_list = compound.getList("maintainers", NbtElement.STRING_TYPE);
-                maintainers_list.forEach(nbtElement -> {
-                    customStatistic.addMaintainer(nbtElement.asString());
+            if (compound.contains("maintainers")) {
+                compound.getList("maintainers").ifPresent(maintainers_list -> {
+                    maintainers_list.forEach(nbtElement -> {
+                        nbtElement.asString().ifPresent(customStatistic::addMaintainer);
+                    });
                 });
             }
 
             // Pull scores, if exists.
-            if (compound.contains("scores", NbtElement.COMPOUND_TYPE)) {
-                NbtCompound scores = compound.getCompound("scores");
-                scores.getKeys().forEach(username -> {
-                    customStatistic.setScore(username, scores.getInt(username));
+            if (compound.contains("scores")) {
+                compound.getCompound("scores").ifPresent(scores -> {
+                    scores.getKeys().forEach(username -> {
+                        scores.getInt(username).ifPresent(score -> customStatistic.setScore(username, score));
+                    });
                 });
             }
 
             // Pull format, if exists.
-            if (compound.contains("format", NbtElement.STRING_TYPE)) {
-                StatFormat format = StatFormat.getByName(compound.getString("format"));
-                if (format != null)
-                    customStatistic.setFormat(format);
+            if (compound.contains("format")) {
+                compound.getString("format").ifPresent(formatString -> {
+                    StatFormat format = StatFormat.getByName(formatString);
+                    if (format != null)
+                        customStatistic.setFormat(format);
+                });
             }
 
             // Return.

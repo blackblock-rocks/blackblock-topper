@@ -44,13 +44,13 @@ public class CustomStatisticsAugment implements Augment.Global {
     @Override
     public void readFromNbt(NbtCompound nbt, RegistryWrapper.WrapperLookup registryLookup) {
         // Get custom statistics list.
-        NbtList list = nbt.getList("custom_statistics", NbtElement.COMPOUND_TYPE);
-
-        // For each entry in the list, add a new custom statistic.
-        list.forEach(nbtElement -> {
-            CustomStatistic customStatistic = CustomStatistic.fromNbt(nbtElement);
-            if (customStatistic != null)
-                customStatisticList.add(customStatistic);
+        nbt.getList("custom_statistics").ifPresent(list -> {
+            // For each entry in the list, add a new custom statistic.
+            list.forEach(nbtElement -> {
+                CustomStatistic customStatistic = CustomStatistic.fromNbt(nbtElement);
+                if (customStatistic != null)
+                    customStatisticList.add(customStatistic);
+            });
         });
     }
 

@@ -375,7 +375,7 @@ public class StatisticsScreen extends ItemBrowsingScreen {
             // If stack has a custom_stat_owner attribute, add that to the lore.
             NbtComponent nbt = stack.get(DataComponentTypes.CUSTOM_DATA);
             if (nbt != null) {
-                String custom_stat_owner = nbt.getNbt().getString("custom_stat_owner");
+                String custom_stat_owner = nbt.getNbt().getString("custom_stat_owner").orElse("");
                 if (!custom_stat_owner.isEmpty())
                     button.setLore(Text.literal("ᴄᴜꜱᴛᴏᴍ ꜱᴛᴀᴛɪꜱᴛɪᴄ [" + custom_stat_owner + "]"));
             }

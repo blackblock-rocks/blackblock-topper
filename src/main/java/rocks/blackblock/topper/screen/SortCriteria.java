@@ -1,6 +1,7 @@
 package rocks.blackblock.topper.screen;
 
 import net.minecraft.component.DataComponentTypes;
+import net.minecraft.component.type.NbtComponent;
 import net.minecraft.item.BlockItem;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
@@ -74,8 +75,12 @@ public enum SortCriteria implements StringIdentifiable {
         } else if (this == SortCriteria.OWNER) {
             stacks.sort(Comparator.comparing(stack -> stack.getName().getString()));
             stacks.sort(Comparator.comparing(stack -> {
-                String owner = stack.getComponents().get(DataComponentTypes.CUSTOM_DATA).getNbt().getString("custom_stat_owner");
-                return owner.isEmpty() ? "zzzzzzzzzzzzzzzz" : owner;
+                NbtComponent customData = stack.getComponents().get(DataComponentTypes.CUSTOM_DATA);
+                if (customData != null) {
+                    String owner = customData.getNbt().getString("custom_stat_owner").orElse("");
+                    return owner.isEmpty() ? "zzzzzzzzzzzzzzzz" : owner;
+                }
+                return "zzzzzzzzzzzzzzzz";
             }));
 
         // Mined stat, being the only block stat, gets its own special part.
