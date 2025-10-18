@@ -13,6 +13,7 @@ import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
+import rocks.blackblock.bib.util.BibData;
 import rocks.blackblock.core.BlackBlockCore;
 import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.ScreenBuilder;
@@ -124,7 +125,7 @@ public class StatisticsScreen extends ItemBrowsingScreen {
                 stack.set(DataComponentTypes.CUSTOM_NAME, Text.literal(customStatistic.getDisplayName()).append(Text.literal(": ").append(Text.literal(String.valueOf(customStatistic.getFormattedScore(player.getName().getString()))).formatted(Formatting.WHITE))).setStyle(Style.EMPTY.withColor(Formatting.YELLOW).withItalic(false)));
                 NbtComponent nbt = stack.get(DataComponentTypes.CUSTOM_DATA);
                 if (nbt != null) {
-                    NbtCompound nbt2 = nbt.getNbt();
+                    NbtCompound nbt2 = BibData.extractCompound(nbt);
                     nbt2.putString("custom_stat_owner", customStatistic.getOwner());
                     stack.set(DataComponentTypes.CUSTOM_DATA, NbtComponent.of(nbt2));
                 }
@@ -375,7 +376,7 @@ public class StatisticsScreen extends ItemBrowsingScreen {
             // If stack has a custom_stat_owner attribute, add that to the lore.
             NbtComponent nbt = stack.get(DataComponentTypes.CUSTOM_DATA);
             if (nbt != null) {
-                String custom_stat_owner = nbt.getNbt().getString("custom_stat_owner").orElse("");
+                String custom_stat_owner = BibData.extractCompound(nbt).getString("custom_stat_owner").orElse("");
                 if (!custom_stat_owner.isEmpty())
                     button.setLore(Text.literal("ᴄᴜꜱᴛᴏᴍ ꜱᴛᴀᴛɪꜱᴛɪᴄ [" + custom_stat_owner + "]"));
             }

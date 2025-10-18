@@ -9,6 +9,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.stat.StatType;
 import net.minecraft.stat.Stats;
 import net.minecraft.util.StringIdentifiable;
+import rocks.blackblock.bib.util.BibData;
 import rocks.blackblock.screenbuilder.BBSB;
 import rocks.blackblock.screenbuilder.textures.IconTexture;
 
@@ -77,7 +78,7 @@ public enum SortCriteria implements StringIdentifiable {
             stacks.sort(Comparator.comparing(stack -> {
                 NbtComponent customData = stack.getComponents().get(DataComponentTypes.CUSTOM_DATA);
                 if (customData != null) {
-                    String owner = customData.getNbt().getString("custom_stat_owner").orElse("");
+                    String owner = BibData.extractCompound(customData).getString("custom_stat_owner").orElse("");
                     return owner.isEmpty() ? "zzzzzzzzzzzzzzzz" : owner;
                 }
                 return "zzzzzzzzzzzzzzzz";

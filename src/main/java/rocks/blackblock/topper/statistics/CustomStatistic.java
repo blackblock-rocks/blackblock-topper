@@ -45,7 +45,7 @@ public class CustomStatistic {
         // If the display item is not set, then return the owner's player head.
         if (this.display_item == null || this.display_item.isEmpty()) {
             ItemStack default_head = new ItemStack(Items.PLAYER_HEAD);
-            default_head.set(DataComponentTypes.PROFILE, new ProfileComponent(Optional.of(this.getOwner()), Optional.empty(), new PropertyMap()));
+            default_head.set(DataComponentTypes.PROFILE, ProfileComponent.ofDynamic(this.getOwner()));
             return default_head;
         }
         // Return.
